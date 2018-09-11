@@ -4,10 +4,12 @@ const defaultSettings = {
     vertical: 10
   },
   tileSize: {
-    horizontal: 40,
-    vertical: 40
+    horizontal: 50,
+    vertical: 50
   }
 };
+
+let settings = {};
 
 let state = {
   board: [],
@@ -33,12 +35,13 @@ let state = {
   }
 };
 
-const setState = newState => {
-  state = { ...state, ...newState };
+const setStateLocation = (location, actor) => {
+  state.actors[actor].tile.x = location[0];
+  state.actors[actor].tile.y = location[1];
   render(state.board, defaultSettings);
 };
 
-const createGameBoard = settings => {
+const createGameBoard = () => {
   const board = [];
   let i = 0;
 
@@ -69,7 +72,8 @@ const getActiveTiles = (rowIndex, columnIndex) => {
   return classList;
 };
 
-const render = (board, settings) => {
+const render = () => {
+  const board = state.board;
   const width = settings.boardSize.horizontal * settings.tileSize.horizontal;
   const height = settings.boardSize.vertical * settings.tileSize.vertical;
   const boardMarkup = `
@@ -136,25 +140,17 @@ const move = (direction, actor) => {
     console.log("out of bounds");
     return false;
   }
-
-  setState({
-    [actor]: {
-      tile: {
-        x: newLocation[0],
-        y: newLocation[1]
-      }
-    }
-  });
+  setStateLocation(newLocation, actor);
 };
 
 /**
  *
  */
 const main = (customSettings = {}) => {
-  const settings = { ...defaultSettings, ...customSettings };
-  state.board = createGameBoard(settings);
-  render(state.board, settings);
-  move("right", "hero");
+  settings = { ...defaultSettings, ...customSettings };
+  state.board = createGameBoard();
+  render();
+  move("down", "hero");
 };
 
 main();
