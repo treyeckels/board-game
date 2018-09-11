@@ -113,10 +113,9 @@ const move = (direction, actor) => {
   }
 
   const isOff = isOutOfBounds(newLocation);
-  if (isOff) {
-    console.log("out of bounds");
+  if (!isOff) {
+    setStateLocation(newLocation, actor);
   }
-  setStateLocation(newLocation, actor);
 };
 
 const render = () => {
