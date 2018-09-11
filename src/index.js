@@ -89,10 +89,18 @@ const isOutOfBounds = newLocation => {
   return false;
 };
 
+const setGameState = gameState => {
+  if (gameState === "hasLost") {
+    state.hasLost = true;
+  } else {
+    state.hasWon = true;
+  }
+};
+
 const move = (direction, actor) => {
   const x = state.actors[actor].tile.x;
   const y = state.actors[actor].tile.y;
-  console.log(x, y);
+
   let newLocation = [];
   switch (direction) {
     case "ArrowUp":
@@ -113,6 +121,27 @@ const move = (direction, actor) => {
   }
 
   const isOff = isOutOfBounds(newLocation);
+  const monsterLocationX = state.actors.monster.tile.x;
+  const monsterLocationY = state.actors.monster.tile.y;
+  if (
+    newLocation[0] === monsterLocationX &&
+    newLocation[1] === monsterLocationY
+  ) {
+    setGameState("hasLost");
+    endGame();
+    return false;
+  }
+  const treasureLocationX = state.actors.treasure.tile.x;
+  const treasureLocationY = state.actors.treasure.tile.y;
+  if (
+    newLocation[0] === treasureLocationX &&
+    newLocation[1] === treasureLocationY
+  ) {
+    setGameState("hasWon");
+    endGame();
+    return false;
+  }
+
   if (!isOff) {
     setStateLocation(newLocation, actor);
   }
@@ -157,11 +186,7 @@ const endGame = () => {
 };
 
 const handleKeyboardInteraction = evt => {
-  if (state.hasWon || state.hasLost) {
-    endGame();
-  } else {
-    move(evt.key, "hero");
-  }
+  move(evt.key, "hero");
 };
 
 /**
