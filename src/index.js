@@ -4,8 +4,8 @@ const defaultSettings = {
     vertical: 10
   },
   tileSize: {
-    horizontal: 50,
-    vertical: 50
+    horizontal: 40,
+    vertical: 40
   }
 };
 
