@@ -1,0 +1,21 @@
+#board {
+  box-sizing: border-box;
+}
+
+.tile {
+  border: 1px solid black;
+  float: left;
+  box-sizing: border-box;
+}
+
+.monster-active {
+  background-color: red;
+}
+
+.hero-active {
+  background-color: green;
+}
+
+.treasure-active {
+  background-color: gold;
+}
