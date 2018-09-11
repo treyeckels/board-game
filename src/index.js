@@ -13,6 +13,8 @@ let settings = {};
 
 let state = {
   board: [],
+  hasWon: false,
+  hasLost: false,
   actors: {
     hero: {
       tile: {
@@ -72,6 +74,51 @@ const getActiveTiles = (rowIndex, columnIndex) => {
   return classList;
 };
 
+const isOutOfBounds = newLocation => {
+  const board = state.board;
+  const row = newLocation[0];
+  const column = newLocation[1];
+  if (board[row] === void 0) {
+    return true;
+  }
+
+  if (board[row][column] === void 0) {
+    return true;
+  }
+
+  return false;
+};
+
+const move = (direction, actor) => {
+  const x = state.actors[actor].tile.x;
+  const y = state.actors[actor].tile.y;
+  console.log(x, y);
+  let newLocation = [];
+  switch (direction) {
+    case "ArrowUp":
+      newLocation = [x - 1, y];
+      break;
+    case "ArrowDown":
+      newLocation = [x + 1, y];
+      break;
+    case "ArrowLeft":
+      newLocation = [x, y - 1];
+      break;
+    case "ArrowRight":
+      newLocation = [x, y + 1];
+      break;
+    default:
+      newLocation = [0, 0];
+      break;
+  }
+
+  const isOff = isOutOfBounds(newLocation);
+  if (isOff) {
+    console.log("out of bounds");
+  }
+  setStateLocation(newLocation, actor);
+};
+
 const render = () => {
   const board = state.board;
   const width = settings.boardSize.horizontal * settings.tileSize.horizontal;
@@ -98,49 +145,24 @@ const render = () => {
   });
 };
 
-const isOutOfBounds = newLocation => {
-  const board = state.board;
-  const row = newLocation[0];
-  const column = newLocation[1];
-  if (board[row] === void 0) {
-    return true;
-  }
-
-  if (board[row][column] === void 0) {
-    return true;
-  }
-
-  return false;
+const endGame = () => {
+  const endScreen = document.createElement("div");
+  endScreen.className = "cover";
+  document.body.appendChild(endScreen);
+  document.body.removeEventListener("keydown", handleKeyboardInteraction);
+  const context = state.hasWon ? "won" : "lost";
+  const endText = `You ${context}!`;
+  const textColor = state.hasWon ? "green" : "red";
+  const graphEleMarkup = `<p style="color: ${textColor};">${endText}</p>`;
+  endScreen.innerHTML = graphEleMarkup;
 };
 
-const move = (direction, actor) => {
-  const x = state.actors[actor].tile.x;
-  const y = state.actors[actor].tile.y;
-  let newLocation = [];
-  switch (direction) {
-    case "up":
-      newLocation = [x - 1, y];
-      break;
-    case "down":
-      newLocation = [x + 1, y];
-      break;
-    case "left":
-      newLocation = [x, y - 1];
-      break;
-    case "right":
-      newLocation = [x, y + 1];
-      break;
-    default:
-      newLocation = [0, 0];
-      break;
+const handleKeyboardInteraction = evt => {
+  if (state.hasWon || state.hasLost) {
+    endGame();
+  } else {
+    move(evt.key, "hero");
   }
-
-  const isOff = isOutOfBounds(newLocation);
-  if (isOff) {
-    console.log("out of bounds");
-    return false;
-  }
-  setStateLocation(newLocation, actor);
 };
 
 /**
@@ -150,7 +172,7 @@ const main = (customSettings = {}) => {
   settings = { ...defaultSettings, ...customSettings };
   state.board = createGameBoard();
   render();
-  move("down", "hero");
+  document.body.addEventListener("keydown", handleKeyboardInteraction);
 };
 
 main();

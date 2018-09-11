@@ -1,5 +1,11 @@
+body {
+  position: relative;
+  font-family: Arial;
+}
+
 #board {
   box-sizing: border-box;
+  position: relative;
 }
 
 .tile {
@@ -18,4 +24,24 @@
 
 .treasure-active {
   background-color: gold;
+}
+
+.cover {
+  background-color: black;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.cover p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  margin: 0;
+  padding: 0;
 }
